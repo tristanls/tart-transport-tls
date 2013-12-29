@@ -1,0 +1,31 @@
+{
+  "name": "tart-transport-tls",
+  "version": "0.0.0",
+  "description": "TLS transport implementation for tart",
+  "scripts": {
+    "inject-examples": "node scripts/injectExamples.js",
+    "readme": "node examples/readme.js",
+    "test": "node scripts/test.js"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "nodeunit": "0.8.2",
+    "tart-tracing": "0.1.5",
+    "tart": "0.1.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tristanls/tart-transport-tls.git"
+  },
+  "keywords": [
+    "tart",
+    "actor",
+    "transport",
+    "tls"
+  ],
+  "contributors": [
+    "Dale Schumacher <dale.schumacher@gmail.com>",
+    "Tristan Slominski <tristan.slominski@gmail.com>"
+  ],
+  "license": "MIT"
+}
