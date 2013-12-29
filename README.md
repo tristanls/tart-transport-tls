@@ -120,7 +120,7 @@ listen({
 **Public API**
 
   * [transport.sendBeh](#transportsendbeh)
-  * [transport.sendWithOptions](#transportsendwithoptions)
+  * [transport.sendWithOptions(tlsOptions)](#transportsendwithoptionstlsoptions)
   * [transport.server(receptionist)](#transportserverreceptionist)
   * [serverCapabilities.closeBeh](#servercapabilitiesclosebeh)
   * [serverCapabilities.listenBeh](#servercapabilitieslistenbeh)
