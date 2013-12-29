@@ -37,6 +37,13 @@ var transport = require('../index.js');
 var sponsor = tart.minimal();
 
 var send = sponsor(transport.sendBeh);
+var sendWithOptions = sponsor(transport.sendWithOptions({
+    key: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-key.pem'))),
+    cert: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-cert.pem'))),
+    rejectUnauthorized: true,
+    secureProtocol: "TLSv1_method",
+    ca: [fs.readFileSync(path.normalize(path.join(__dirname, 'readme/server-cert.pem')))]
+}));
 
 var receivedMessageCount = 0;
 var receptionist = sponsor(function (message) {
@@ -57,16 +64,9 @@ var fail = sponsor(function (error) {
 
 var listenAck = sponsor(function listenAckBeh(message) {
     console.log('transport listening on tcp://' + message.host + ':' + message.port);
-    send({
+    sendWithOptions({
         address: 'tcp://localhost:7847/#t5YM5nxnJ/xkPTo3gtHEyLdwMRFIwyJOv5kvcFs+FoMGdyoDNgSLolq0',
         content: '{"some":{"json":"content"},"foo":true}',
-
-        key: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-key.pem'))),
-        cert: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-cert.pem'))),
-        rejectUnauthorized: true,
-        secureProtocol: "TLSv1_method",
-        ca: [fs.readFileSync(path.normalize(path.join(__dirname, 'readme/server-cert.pem')))],
-
         fail: fail,
         ok: function () {
             console.log('foo sent');
@@ -120,6 +120,7 @@ listen({
 **Public API**
 
   * [transport.sendBeh](#transportsendbeh)
+  * [transport.sendWithOptions](#transportsendwithoptions)
   * [transport.server(receptionist)](#transportserverreceptionist)
   * [serverCapabilities.closeBeh](#servercapabilitiesclosebeh)
   * [serverCapabilities.listenBeh](#servercapabilitieslistenbeh)
@@ -157,6 +158,35 @@ send({
     rejectUnauthorized: true,
     secureProtocol: "TLSv1_method",
     ca: [fs.readFileSync('server-cert.pem')]
+});
+```
+
+### transport.sendWithOptions(tlsOptions)
+
+  * `tlsOptions`: _Object_
+    * `pfx`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `key`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `passhprase`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `cert`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `ca`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `rejectUnauthorized`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `NPNProtocols`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `servername`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+    * `secureProtocol`: See [TLS connect options](http://nodejs.org/api/tls.html#tls_tls_connect_options_callback).
+
+Creates an actor behavior identical to [transport.sendBeh](#transportsendbeh), except that _TLS Options_ portion for every send will be automatically populated from `tlsOptions` provided.
+
+```javascript
+var sendWithOptions = sponsor(transport.sendWithOptions({
+    key: fs.readFileSync('client-key.pem'),
+    cert: fs.readFileSync('client-cert.pem'),
+    rejectUnauthorized: true,
+    secureProtocol: "TLSv1_method",
+    ca: [fs.readFileSync('server-cert.pem')]    
+}));
+sendWithOptions = send({
+    address: 'tcp://localhost:7847/#ZkiLrAwGX7N1eeOXXMAeoVp7vsYJKeISjfT5fESfkRiZOIpkPx1bAS8y', 
+    content: '{"some":{"json":"content"}}'    
 });
 ```
 

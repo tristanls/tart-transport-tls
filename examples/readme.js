@@ -39,6 +39,13 @@ var transport = require('../index.js');
 var sponsor = tart.minimal();
 
 var send = sponsor(transport.sendBeh);
+var sendWithOptions = sponsor(transport.sendWithOptions({
+    key: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-key.pem'))),
+    cert: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-cert.pem'))),
+    rejectUnauthorized: true,
+    secureProtocol: "TLSv1_method",
+    ca: [fs.readFileSync(path.normalize(path.join(__dirname, 'readme/server-cert.pem')))]
+}));
 
 var receivedMessageCount = 0;
 var receptionist = sponsor(function (message) {
@@ -59,16 +66,9 @@ var fail = sponsor(function (error) {
 
 var listenAck = sponsor(function listenAckBeh(message) {
     console.log('transport listening on tcp://' + message.host + ':' + message.port);
-    send({
+    sendWithOptions({
         address: 'tcp://localhost:7847/#t5YM5nxnJ/xkPTo3gtHEyLdwMRFIwyJOv5kvcFs+FoMGdyoDNgSLolq0',
         content: '{"some":{"json":"content"},"foo":true}',
-
-        key: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-key.pem'))),
-        cert: fs.readFileSync(path.normalize(path.join(__dirname, 'readme/client-cert.pem'))),
-        rejectUnauthorized: true,
-        secureProtocol: "TLSv1_method",
-        ca: [fs.readFileSync(path.normalize(path.join(__dirname, 'readme/server-cert.pem')))],
-
         fail: fail,
         ok: function () {
             console.log('foo sent');

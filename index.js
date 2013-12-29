@@ -92,6 +92,15 @@ transport.sendBeh = function sendBeh(message) {
     });
 };
 
+transport.sendWithOptions = function sendWithOptions(tlsOptions) {
+    return function sendWithOptionsBeh(message) {
+        Object.keys(tlsOptions).forEach(function (key) {
+            message[key] = tlsOptions[key];
+        });
+        transport.sendBeh.call(this, message);
+    }
+};
+
 transport.server = function server(receptionist) {
     var _server;
 
