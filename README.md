@@ -228,7 +228,7 @@ listen({
     ca: [fs.readFileSync('client-cert.pem')],
 
     ok: sponsor(function listenAckBeh(message) {
-        console.log('transport listening on udp://' + message.host + ':' + message.port);
+        console.log('transport listening on tcp://' + message.host + ':' + message.port);
     }),
     fail: sponsor(function failBeh(message) {
         console.error(message);
